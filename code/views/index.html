@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Wordle Start Word Ranker</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+        </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Wordle Start Word Ranker</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://gitlab.demannu.com/demannu/py-wordle-starter">Git</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3 offset-2">
+                    <div class="accordion" id="toolAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Single Word Rank
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#toolAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col" style="text-align:center;">
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon3">Enter your test word</span>
+                                                <input type="text" class="form-control" id="user_word" aria-describedby="basic-addon3" maxlength="5">
+                                                <input name="singleButton" id="singleButton" class="btn btn-primary" type="button" value="Test word" onClick="singleButton(this)" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapse show" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Compare Words
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse" aria-labelledby="headingTwo">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col" style="text-align:center;">
+                                            <div style="text-align:center;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="basic-addon2">First word</span>
+                                                    <input type="text" class="form-control" id="user_word1" aria-describedby="basic-addon2" maxlength="5">
+                                                </div>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="user_word2"     aria-describedby="basic-addon" maxlength="5">
+                                                    <span class="input-group-text" id="basic-addon" >Second word</span>
+                                                </div>
+                                            
+                                                <input name="compareButton" id="compareButton" class="btn btn-primary" type="button" value="Compare Words" onClick="compareButton(this)" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="accordion" id="resultAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                                Single Results
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse" aria-labelledby="headingThree">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col" style="text-align:center;">
+                                            <table class="table table-hover" id="resultTable" style="display: none;">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Word</th>
+                                                        <th scope="col">Green Tiles</th>
+                                                        <th scope="col">Yellow Tiles</th>
+                                                        <th scope="col">Gray Tiles</th>
+                                                        <th scope="col">Wordlist</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                                        
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapse show" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Compare Results
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col" style="text-align:center;">
+                                            <table class="table table-hover" id="compareTable" style="display: none;">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Word 1</th>
+                                                        <th scope="col">Word 2</th>
+                                                        <th scope="col">Green Tiles</th>
+                                                        <th scope="col">Yellow Tiles</th>
+                                                        <th scope="col">Gray Tiles</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>            
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script>
+            function singleButton(element){
+                var userinput = $("#user_word").val()
+                if(userinput.length != 5){
+                    alert("You need a word with the length of 5!")
+                    $("#user_word").val("")
+                } else {
+                    $.get("/calculate/" + userinput, function(resp){
+                        $("#resultTable tr:last").after("<tr><th scope='row'>" + userinput + "</th><td>" + parseFloat(resp.full_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.partial_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.none_correct*100).toFixed(2)+"%" + "</td><td>" + resp.datapoints + "</td></tr>")
+                        $("#resultTable").toggle(true)
+                        //alert(JSON.stringify(resp))
+                    })
+                }
+            }
+
+            function compareButton(element){
+                var user_word1 = $("#user_word1").val()
+                var user_word2 = $("#user_word2").val()
+                if(user_word1.length != 5 || user_word2.length != 5){
+                    alert("You need a word with the length of 5!")
+                    $("#user_word1").val("")
+                    $("#user_word2").val("")
+                } else {
+                    $.get("/compare/" + user_word1 + "/" + user_word2, function(resp){
+                        $("#compareTable tr:last").after("<tr><th scope='row'>" + user_word1 + "</th><td>" + user_word2 + "</td><td>" + parseFloat(resp.full_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.partial_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.none_correct*100).toFixed(2)+"%" + "</td></tr>")
+                        $("#compareTable").toggle(true)
+                    })
+                }
+            }
+        </script>
+    </body>
+</html>

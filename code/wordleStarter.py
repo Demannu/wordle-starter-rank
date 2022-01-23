@@ -1,6 +1,4 @@
-from wordlist import wordlist
 from random import choice
-from collections import Counter
 
 
 class Results:
