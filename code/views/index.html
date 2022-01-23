@@ -36,7 +36,7 @@
 
         <div class="container-fluid">
             <div class="row">
-                <div class="col-3 offset-2">
+                <div class="col-sm-3 offset-sm-2">
                     <div class="accordion" id="toolAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
@@ -49,8 +49,8 @@
                                     <div class="row">
                                         <div class="col" style="text-align:center;">
                                             <div class="input-group">
-                                                <span class="input-group-text" id="basic-addon3">Enter your test word</span>
-                                                <input type="text" class="form-control" id="user_word" aria-describedby="basic-addon3" maxlength="5">
+                                                <span class="input-group-text" id="basic-addon2">Starter</span>
+                                                <input type="text" class="form-control" id="user_word"  maxlength="5">
                                                 <input name="singleButton" id="singleButton" class="btn btn-primary" type="button" value="Test word" onClick="singleButton(this)" >
                                             </div>
                                         </div>
@@ -87,7 +87,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-sm-6">
                     <div class="accordion" id="resultAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingThree">
@@ -106,7 +106,6 @@
                                                         <th scope="col">Green Tiles</th>
                                                         <th scope="col">Yellow Tiles</th>
                                                         <th scope="col">Gray Tiles</th>
-                                                        <th scope="col">Wordlist</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -128,21 +127,9 @@
                             <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour">
                                 <div class="accordion-body">
                                     <div class="row">
-                                        <div class="col" style="text-align:center;">
-                                            <table class="table table-hover" id="compareTable" style="display: none;">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col">Word 1</th>
-                                                        <th scope="col">Word 2</th>
-                                                        <th scope="col">Green Tiles</th>
-                                                        <th scope="col">Yellow Tiles</th>
-                                                        <th scope="col">Gray Tiles</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                                        
+                                        <div class="col" id="compareHuman">
+                                            
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -161,13 +148,20 @@
                     $("#user_word").val("")
                 } else {
                     $.get("/calculate/" + userinput, function(resp){
-                        $("#resultTable tr:last").after("<tr><th scope='row'>" + userinput + "</th><td>" + parseFloat(resp.full_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.partial_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.none_correct*100).toFixed(2)+"%" + "</td><td>" + resp.datapoints + "</td></tr>")
+                        $("#resultTable tr:last").after("<tr><th scope='row'>" + userinput + "</th><td>" + parseFloat(resp.full_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.partial_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.none_correct*100).toFixed(2)+"%" + "</td></tr>")
                         $("#resultTable").toggle(true)
                         //alert(JSON.stringify(resp))
                     })
                 }
             }
 
+            function moreOrLess(value){
+                if(value > 0){
+                    return "more"
+                } else {
+                    return "less"
+                }
+            }
             function compareButton(element){
                 var user_word1 = $("#user_word1").val()
                 var user_word2 = $("#user_word2").val()
@@ -177,8 +171,18 @@
                     $("#user_word2").val("")
                 } else {
                     $.get("/compare/" + user_word1 + "/" + user_word2, function(resp){
-                        $("#compareTable tr:last").after("<tr><th scope='row'>" + user_word1 + "</th><td>" + user_word2 + "</td><td>" + parseFloat(resp.full_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.partial_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.none_correct*100).toFixed(2)+"%" + "</td></tr>")
-                        $("#compareTable").toggle(true)
+                        $("#compareHuman").empty()
+                        var full_correct = parseFloat(Math.abs(resp.full_correct)*100).toFixed(2)
+                        var full_words = moreOrLess(resp.full_correct)
+                        var partial_correct = parseFloat(Math.abs(resp.partial_correct)*100).toFixed(2)
+                        var partial_words = moreOrLess(resp.partial_correct)
+                        var none_correct = parseFloat(Math.abs(resp.none_correct)*100).toFixed(2)
+                        var none_words = moreOrLess(resp.none_correct)
+                        $("#compareHuman").append(`<span><strong>${user_word1}</strong> is ${full_correct}% ${full_words} likely to get <strong style="color:green;">green</strong> tiles than <strong>${user_word2}</strong></span><br>`)
+                        $("#compareHuman").append(`<span><strong>${user_word1}</strong> is ${partial_correct}% ${partial_words} likely to get <strong style="color:#b59f3b;">yellow</strong> tiles than <strong>${user_word2}</strong></span><br>`)
+                        $("#compareHuman").append(`<span><strong>${user_word1}</strong> is ${none_correct}% ${none_words} likely to get <strong style="color:gray;">gray</strong> tiles than <strong>${user_word2}</strong></span><br>`)
+
+                        $("#compareHuman").toggle(true)
                     })
                 }
             }

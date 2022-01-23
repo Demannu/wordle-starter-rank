@@ -77,9 +77,9 @@ class WordleStarter:
     def compare(self, user_word, picked):
         result = Results()
         for i, v in enumerate(user_word):
-            if picked[i] == v:
+            if picked[i].lower() == v.lower():
                 result.full_correct += 1
-            elif v in picked:
+            elif v.lower() in picked:
                 result.partial_correct += 1
             else:
                 result.none_correct += 1

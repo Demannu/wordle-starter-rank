@@ -49,8 +49,6 @@ async def compare_words(word1, word2):
         )
 
     result = starter.compare_two_word_efficiency(word1, word2)
-    print("RESULT")
-    print(result)
     jsonData = {
         "word1": word1,
         "word2": word2,
