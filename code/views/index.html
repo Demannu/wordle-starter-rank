@@ -178,13 +178,18 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         <script>
             $(document).ready(function(){
+                refreshHighscore()
+            })
+
+            function refreshHighscore(){
                 $.get("/highscore", function(resp){
+                    $("#highscoreTable").find("tr:gt(0)").remove();
                     for(var word in resp){
                         word = resp[word]
                         $("#highscoreTable tr:last").after(`<tr><th scope='row'>${word.word}</th><td>${parseFloat(word.full_correct*100).toFixed(2)}%</td><td>${parseFloat(word.partial_correct*100).toFixed(2)}%</td><td>${parseFloat(word.none_correct*100).toFixed(2)}%</td></tr>`)
                     }
                 })
-            })
+            }
             
             function singleButton(element){
                 var userinput = $("#user_word").val()
@@ -195,7 +200,7 @@
                     $.get("/calculate/" + userinput, function(resp){
                         $("#resultTable tr:last").after("<tr><th scope='row'>" + userinput + "</th><td>" + parseFloat(resp.full_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.partial_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.none_correct*100).toFixed(2)+"%" + "</td></tr>")
                         $("#resultTable").toggle(true)
-                        //alert(JSON.stringify(resp))
+                        refreshHighscore()
                     })
                 }
             }
@@ -226,7 +231,7 @@
                         $("#compareHuman").append(`<span><strong>${user_word1}</strong> is ${full_correct}% ${full_words} likely to get <strong style="color:green;">green</strong> tiles than <strong>${user_word2}</strong></span><br>`)
                         $("#compareHuman").append(`<span><strong>${user_word1}</strong> is ${partial_correct}% ${partial_words} likely to get <strong style="color:#b59f3b;">yellow</strong> tiles than <strong>${user_word2}</strong></span><br>`)
                         $("#compareHuman").append(`<span><strong>${user_word1}</strong> is ${none_correct}% ${none_words} likely to get <strong style="color:gray;">gray</strong> tiles than <strong>${user_word2}</strong></span><br>`)
-
+                        refreshHighscore()
                         $("#compareHuman").toggle(true)
                     })
                 }

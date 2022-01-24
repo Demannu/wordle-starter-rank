@@ -1,4 +1,5 @@
 from db import Base, session
+from wordleStarter import Results
 from sqlalchemy import select
 from models.common import CommonMixin
 from sqlalchemy import Column, String, Float
@@ -18,7 +19,10 @@ class Words(CommonMixin, Base):
         result = session.execute(statement).first()
         return bool(result)
 
-    def add_to_db(self):
+    def add_to_db(self, result: Results):
+        self.full_correct = result.full_correct
+        self.partial_correct = result.partial_correct
+        self.none_correct = result.none_correct
         session.add(self)
         session.commit()
 

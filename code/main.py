@@ -40,6 +40,7 @@ async def calculate_word(word):
         result = Words(word=word).get_from_db()
     else:
         result = starter.full_calculate(word)
+        Words(word=word).add_to_db(result)
     jsonData = {
         "full_correct": result.full_correct,
         "partial_correct": result.partial_correct,
