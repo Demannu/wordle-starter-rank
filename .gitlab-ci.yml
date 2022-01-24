@@ -1,11 +1,13 @@
-image: docker:latest
-services:
-    - docker:dind
-
-before_script:
-    - docker info
-
 build_image:
+    image: docker:stable
+    variables:
+        DOCKER_HOST: tcp://docker:2375/
+        DOCKER_DRIVER: overlay2
+        DOCKER_TLS_CERTDIR: ""
+        GIT_STRATEGY: fetch
+    services:
+        - name: docker:dind
+
     script:
         - docker build -t wordle-starter .
         - docker run wordle-starter
