@@ -1,7 +1,7 @@
 build_image:
     image: docker:stable
-    services:
-        - name: docker:dind
+    variables:
+        - DOCKER_HOST: unix:///var/run/docker.sock
 
     script:
         - docker build -t wordle-starter .
