@@ -1,0 +1,4 @@
+build_image:
+    script:
+        - docker build -t wordle-starter .
+        - docker run wordle-starter
