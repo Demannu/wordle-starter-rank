@@ -1,13 +1,10 @@
 build_image:
     image: docker:stable
-    variables:
-        DOCKER_HOST: tcp://192.168.42.30:2375/
-        DOCKER_DRIVER: overlay2
-        DOCKER_TLS_CERTDIR: ""
-        GIT_STRATEGY: fetch
     services:
         - name: docker:dind
 
+    before_script:
+        - docker info
 
     script:
         - docker build -t wordle-starter .
