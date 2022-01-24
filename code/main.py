@@ -30,6 +30,7 @@ async def root():
 
 @app.get("/calculate/{word}")
 async def calculate_word(word):
+    word = word.lower()
     if len(word) != 5:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -51,6 +52,8 @@ async def calculate_word(word):
 
 @app.get("/compare/{word1}/{word2}")
 async def compare_words(word1, word2):
+    word1 = word1.lower()
+    word2 = word2.lower()
     if len(word1) != 5 or len(word2) != 5:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
