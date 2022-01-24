@@ -1,5 +1,7 @@
 build_image:
     image: docker:stable
+    variables:
+        DOCKER_HOST: unix:///var/run/docker.sock
     services:
         - name: docker:dind
 
