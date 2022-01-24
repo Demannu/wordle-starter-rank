@@ -17,7 +17,6 @@
                 <a class="navbar-brand" href="#">
                     <img src="https://gitlab.demannu.com/uploads/-/system/appearance/header_logo/1/demannuStudios.png" width="32" height="32">
                     Wordle Start Word Ranker</a>
-                
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
                 </button>
@@ -27,7 +26,10 @@
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="https://gitlab.demannu.com/demannu/py-wordle-starter">Git</a>
+                            <a class="nav-link" href="https://wordle.demannu.dev/docs">API</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://github.com/Demannu/wordle-starter-rank">Github</a>
                         </li>
                     </ul>
                 </div>
@@ -111,7 +113,6 @@
                                                 <tbody>
                                                 </tbody>
                                             </table>
-                                                        
                                         </div>
                                     </div>
                                     
@@ -136,11 +137,52 @@
                             </div>
                         </div>
                     </div>
-                </div>            
+                </div>   
+            </div>
+            <div class="row">
+                <div class="col-sm-9 offset-sm-2">
+                    <div class="accordion" id="highscoreAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFive">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+                                Best Words
+                                </button>
+                            </h2>
+                            <div id="collapseFive" class="accordion-collapse collapse show" aria-labelledby="headingFive" data-bs-parent="#highscoreAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col" style="text-align:center;">
+                                            <table class="table table-hover" id="highscoreTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Word</th>
+                                                        <th scope="col">Green Tiles</th>
+                                                        <th scope="col">Yellow Tiles</th>
+                                                        <th scope="col">Gray Tiles</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
         </div>
         
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         <script>
+            $(document).ready(function(){
+                $.get("/highscore", function(resp){
+                    for(var word in resp){
+                        word = resp[word]
+                        $("#highscoreTable tr:last").after(`<tr><th scope='row'>${word.word}</th><td>${parseFloat(word.full_correct*100).toFixed(2)}%</td><td>${parseFloat(word.partial_correct*100).toFixed(2)}%</td><td>${parseFloat(word.none_correct*100).toFixed(2)}%</td></tr>`)
+                    }
+                })
+            })
+            
             function singleButton(element){
                 var userinput = $("#user_word").val()
                 if(userinput.length != 5){

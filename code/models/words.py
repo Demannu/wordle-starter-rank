@@ -12,12 +12,30 @@ class Words(CommonMixin, Base):
     partial_correct = Column(Float)
     none_correct = Column(Float)
 
-    def check_db(self):
-        statement = select(Words).filter_by(word=self.word)
+    @classmethod
+    def check_db(cls, word):
+        statement = select(cls).filter_by(word=word)
         result = session.execute(statement).first()
-        if not result:
-            self.add_to_db()
+        return bool(result)
 
     def add_to_db(self):
         session.add(self)
         session.commit()
+
+    def get_from_db(self):
+        statement = select(Words).filter_by(word=self.word)
+        result = session.execute(statement).first()
+        for word in result:
+            self.full_correct = word.full_correct
+            self.partial_correct = word.partial_correct
+            self.none_correct = word.none_correct
+        return self
+
+    @classmethod
+    def get_highest_scores(cls, metric):
+        statement = select(cls).order_by(cls.none_correct).limit(5)
+        result = session.execute(statement)
+        return result
+
+    def __str__(self):
+        return f"Word: {self.word}"

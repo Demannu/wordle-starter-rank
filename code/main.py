@@ -8,8 +8,9 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from models.words import Words
 
 app = FastAPI()
+
+## Create tables
 Base.metadata.create_all(db)
-session.commit()
 
 ## Load wordlist, import from various methods
 words = WordlistHelper()
@@ -18,11 +19,6 @@ words.combine(wordlist)
 
 ## Initialize helper class
 starter = WordleStarter(words.words)
-
-test = Words(
-    word="whore", full_correct="0.55", partial_correct="0.15", none_correct="0.30"
-)
-test.check_db()
 
 
 @app.get("/")
@@ -40,9 +36,11 @@ async def calculate_word(word):
             detail="The length of the word must be 5",
         )
 
-    result = starter.full_calculate(word)
+    if Words.check_db(word):
+        result = Words(word=word).get_from_db()
+    else:
+        result = starter.full_calculate(word)
     jsonData = {
-        "datapoints": result.data_points,
         "full_correct": result.full_correct,
         "partial_correct": result.partial_correct,
         "none_correct": result.none_correct,
@@ -67,4 +65,18 @@ async def compare_words(word1, word2):
         "none_correct": result["none_correct"],
     }
     return JSONResponse(content=jsonData)
-    pass
+
+
+@app.get("/highscore")
+async def highscore():
+    top_words = Words.get_highest_scores("full_correct")
+    top_words = [
+        {
+            "word": value.word,
+            "full_correct": value.full_correct,
+            "partial_correct": value.partial_correct,
+            "none_correct": value.none_correct,
+        }
+        for value, in top_words
+    ]
+    return JSONResponse(content=top_words)
