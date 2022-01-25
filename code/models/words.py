@@ -1,6 +1,6 @@
 from db import Base, session
 from wordleStarter import Results
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from models.common import CommonMixin
 from sqlalchemy import Column, String, Float
 
@@ -12,6 +12,7 @@ class Words(CommonMixin, Base):
     full_correct = Column(Float)
     partial_correct = Column(Float)
     none_correct = Column(Float)
+    score = Column(Float)
 
     @classmethod
     def check_db(cls, word):
@@ -23,6 +24,7 @@ class Words(CommonMixin, Base):
         self.full_correct = result.full_correct
         self.partial_correct = result.partial_correct
         self.none_correct = result.none_correct
+        self.score = result.score
         session.add(self)
         session.commit()
 
@@ -33,11 +35,12 @@ class Words(CommonMixin, Base):
             self.full_correct = word.full_correct
             self.partial_correct = word.partial_correct
             self.none_correct = word.none_correct
+            self.score = word.score
         return self
 
     @classmethod
     def get_highest_scores(cls, metric):
-        statement = select(cls).order_by(cls.none_correct).limit(5)
+        statement = select(cls).order_by(desc(cls.score)).limit(5)
         result = session.execute(statement)
         return result
 

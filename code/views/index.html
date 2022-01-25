@@ -120,6 +120,7 @@
                                                         <th scope="col">Green Tiles</th>
                                                         <th scope="col">Yellow Tiles</th>
                                                         <th scope="col">Gray Tiles</th>
+                                                        <th scope="col">Score</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -171,6 +172,7 @@
                                                         <th scope="col">Green Tiles</th>
                                                         <th scope="col">Yellow Tiles</th>
                                                         <th scope="col">Gray Tiles</th>
+                                                        <th scope="col">Score</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -195,7 +197,7 @@
                     $("#highscoreTable").find("tr:gt(0)").remove();
                     for(var word in resp){
                         word = resp[word]
-                        $("#highscoreTable tr:last").after(`<tr><th scope='row'>${word.word}</th><td>${parseFloat(word.full_correct*100).toFixed(2)}%</td><td>${parseFloat(word.partial_correct*100).toFixed(2)}%</td><td>${parseFloat(word.none_correct*100).toFixed(2)}%</td></tr>`)
+                        $("#highscoreTable tr:last").after(`<tr><th scope='row'>${word.word}</th><td>${parseFloat(word.full_correct*100).toFixed(2)}%</td><td>${parseFloat(word.partial_correct*100).toFixed(2)}%</td><td>${parseFloat(word.none_correct*100).toFixed(2)}%</td><td>${word.score.toFixed(2)}</td></tr>`)
                     }
                 })
             }
@@ -206,11 +208,15 @@
                     alert("You need a word with the length of 5!")
                     $("#user_word").val("")
                 } else {
-                    $.get("/calculate/" + userinput, function(resp){
-                        $("#resultTable tr:last").after("<tr><th scope='row'>" + userinput + "</th><td>" + parseFloat(resp.full_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.partial_correct*100).toFixed(2)+"%" + "</td><td>" + parseFloat(resp.none_correct*100).toFixed(2)+"%" + "</td></tr>")
+                    $.get({url: "/calculate/" + userinput,
+                    success: function(resp){
+                        $("#resultTable tr:last").after(`<tr><th scope='row'>${userinput}</th><td>${parseFloat(resp.full_correct*100).toFixed(2)}%</td><td>${parseFloat(resp.partial_correct*100).toFixed(2)}%</td><td>${parseFloat(resp.none_correct*100).toFixed(2)}%</td><td>${resp.score.toFixed(2)}</td></tr>`)
                         $("#resultTable").toggle(true)
                         refreshHighscore()
-                    })
+                    },
+                    error: function(resp){
+                        alert(resp.responseJSON.detail)
+                    }})
                 }
             }
 

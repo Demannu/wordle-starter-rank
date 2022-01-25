@@ -9,7 +9,7 @@ class WordlistHelper:
     def load(self, path):
         with open(path) as file:
             for line in file.readlines():
-                self.words.add(line)
+                self.words.add(line.strip())
 
     def count(self):
         return len(self.words)

@@ -1,4 +1,3 @@
-from wordlist import wordlist
 from db import db, session, Base
 from wordleStarter import WordleStarter
 from wordlistHelper import WordlistHelper
@@ -14,8 +13,8 @@ Base.metadata.create_all(db)
 
 ## Load wordlist, import from various methods
 words = WordlistHelper()
-words.load("./resources/sgb.list")
-words.combine(wordlist)
+words.load("./resources/wordle-answers.list")
+words.load("./resources/wordle-allowed.list")
 
 ## Initialize helper class
 starter = WordleStarter(words.words)
@@ -31,6 +30,15 @@ async def root():
 @app.get("/calculate/{word}")
 async def calculate_word(word):
     word = word.lower()
+
+    ## We now verify if the word is a real word
+    if not starter.check_wordlist(word):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"The word {word} does not exist in the wordlist",
+        )
+
+    ## Verify if word is actually 5 characters long
     if len(word) != 5:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -46,12 +54,20 @@ async def calculate_word(word):
         "full_correct": result.full_correct,
         "partial_correct": result.partial_correct,
         "none_correct": result.none_correct,
+        "score": result.score,
     }
     return JSONResponse(content=jsonData)
 
 
 @app.get("/compare/{word1}/{word2}")
 async def compare_words(word1, word2):
+    ## We now verify if the words are real
+    if not starter.check_wordlist(word1) or not starter.check_wordlist(word2):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The word does not exist in the wordlist",
+        )
+
     word1 = word1.lower()
     word2 = word2.lower()
     if len(word1) != 5 or len(word2) != 5:
@@ -67,6 +83,7 @@ async def compare_words(word1, word2):
         "full_correct": result["full_correct"],
         "partial_correct": result["partial_correct"],
         "none_correct": result["none_correct"],
+        "score": result["score"],
     }
     return JSONResponse(content=jsonData)
 
@@ -80,6 +97,7 @@ async def highscore():
             "full_correct": value.full_correct,
             "partial_correct": value.partial_correct,
             "none_correct": value.none_correct,
+            "score": value.score,
         }
         for value, in top_words
     ]
